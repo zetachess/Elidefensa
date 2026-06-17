@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#090b10">
+    <title>GoblinAjedrez · Eliminación de la Defensa</title>
+    <link rel="stylesheet" href="vendor/chessground/chessground.base.css">
+    <link rel="stylesheet" href="vendor/chessground/chessground.brown.css">
+    <link rel="stylesheet" href="vendor/chessground/chessground.cburnett.css">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="game-shell" aria-label="GoblinAjedrez Eliminación de la Defensa">
+      <header class="hud">
+        <div class="brand">
+          <img src="assets/goblin-logo.png" alt="" onerror="this.style.display='none'">
+          <div>
+            <p>GOBLINAJEDREZ</p>
+            <strong>Eliminación de la Defensa</strong>
+          </div>
+        </div>
+        <div class="stats" aria-label="Progreso">
+          <span><em aria-hidden="true">⏱️</em><b id="timeCounter">60</b><small>Tiempo</small></span>
+          <span><em aria-hidden="true">❤️</em><b id="lifeCounter">1</b><small>Vida</small></span>
+          <span><em aria-hidden="true">🔥</em><b id="streakCounter">0</b><small>Racha</small></span>
+          <span><em aria-hidden="true">🏆</em><b id="bestCounter">0</b><small>Récord</small></span>
+        </div>
+      </header>
+
+      <section class="level-screen" id="startScreen" aria-labelledby="startScreenTitle">
+        <div class="screen-copy">
+          <img src="assets/goblin-logo.png" alt="" onerror="this.style.display='none'">
+          <h1 id="startScreenTitle">🛡️ Eliminación de la Defensa</h1>
+          <p>Acierta la pieza defensora a la primera para seguir la racha. Si fallas, vuelves al inicio.</p>
+          <button class="primary-button" id="playButton" type="button">🕹️ Jugar</button>
+        </div>
+      </section>
+
+      <section class="play-screen hidden" id="playScreen" aria-label="Reto">
+        <div class="question-row">
+          <button class="ghost-button" id="backButton" type="button">← Inicio</button>
+          <p id="questionText">Toca la pieza defensora.</p>
+        </div>
+
+        <div class="board-stage" id="boardStage">
+          <div class="board-wrap">
+            <div id="board" aria-label="Tablero de ajedrez"></div>
+            <div class="tutorial-badge hidden" id="tutorialBadge" aria-hidden="true"></div>
+            <div class="feedback-msg" id="feedbackMsg" aria-live="polite"></div>
+            <canvas id="particles" width="640" height="640" aria-hidden="true"></canvas>
+          </div>
+        </div>
+
+        <div class="result-panel" id="resultPanel" aria-live="polite">
+          <strong id="resultTitle">Pulsa la pieza defensora.</strong>
+          <p id="resultText"></p>
+        </div>
+      </section>
+
+    </main>
+
+    <script src="vendor/chess.min.js"></script>
+    <script src="levels.js"></script>
+    <script type="module" src="game.js"></script>
+  </body>
+</html>
