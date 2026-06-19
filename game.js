@@ -6,12 +6,20 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
   const STORAGE_KEY = "goblin-elimina-defensa-run";
   const allLevels = window.levels || [];
   const playableLevels = allLevels.filter((level) => level.fen && level.firstMove && !level.locked);
+  const exposedSquares = {
+    1: "h7", 2: "d5", 3: "c2", 4: "f5", 5: "d7",
+    6: "f5", 7: "b4", 8: "d7", 9: "g4",
+    10: "h7", 11: "e7", 12: "f6", 13: "b2", 14: "d7",
+    15: "d7", 16: "g4", 17: "e7", 18: "b6", 19: "d7",
+    20: "d6", 21: "d5", 22: "b4", 23: "g4", 24: "d2",
+    25: "h5", 26: "g4", 27: "g8", 28: "g4", 29: "d3", 30: "g4"
+  };
 
   const startScreen = document.getElementById("startScreen");
   const playScreen = document.getElementById("playScreen");
   const playButton = document.getElementById("playButton");
   const backButton = document.getElementById("backButton");
-  const timeCounter = document.getElementById("timeCounter");
+  const levelCounter = document.getElementById("levelCounter");
   const lifeCounter = document.getElementById("lifeCounter");
   const streakCounter = document.getElementById("streakCounter");
   const bestCounter = document.getElementById("bestCounter");
@@ -25,6 +33,23 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
   const tutorialBadge = document.getElementById("tutorialBadge");
   const particleCanvas = document.getElementById("particles");
   const particleCtx = particleCanvas.getContext("2d");
+  const captureBadge = document.createElement("div");
+  captureBadge.className = "capture-badge hidden";
+  captureBadge.textContent = "⚔️";
+  boardWrap.appendChild(captureBadge);
+  const exposedBadge = document.createElement("div");
+  exposedBadge.className = "exposed-badge hidden";
+  exposedBadge.textContent = "☠️";
+  boardWrap.appendChild(exposedBadge);
+  const victoryOverlay = document.createElement("div");
+  victoryOverlay.className = "victory-overlay hidden";
+  victoryOverlay.innerHTML = `
+    <div class="victory-card">
+      <div class="victory-trophy" aria-hidden="true">★</div>
+      <h2>¡Enhorabuena!</h2>
+      <button class="primary-button" id="replayButton" type="button">Jugar otra vez</button>
+    </div>`;
+  playScreen.appendChild(victoryOverlay);
 
   let ground = null;
   let audioCtx = null;
@@ -34,8 +59,6 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
   let targetSquare = null;
   let solved = false;
   let streak = 0;
-  let timeLeft = 60;
-  let timerId = null;
   let autoAdvanceId = null;
   let challengeStartedAt = 0;
   let particles = [];
@@ -60,7 +83,7 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
   }
 
   function updateHud() {
-    timeCounter.textContent = String(timeLeft);
+    levelCounter.textContent = `${Math.min(activeIndex + 1, playableLevels.length)}/${playableLevels.length}`;
     lifeCounter.textContent = "1";
     streakCounter.textContent = String(streak);
     bestCounter.textContent = String(progress.bestStreak);
@@ -130,6 +153,12 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
     setTimeout(() => playTone(118, 0.16, "square", 0.05), 90);
   }
 
+  function playVictorySound() {
+    [523, 659, 784, 1047].forEach((frequency, index) => {
+      setTimeout(() => playTone(frequency, 0.34, "triangle", 0.09), index * 135);
+    });
+  }
+
   function computeFirstMove(level) {
     const chess = new Chess(level.fen);
     const move = chess.move(level.firstMove);
@@ -144,7 +173,6 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
   }
 
   function showStartScreen() {
-    stopTimer();
     clearAutoAdvance();
     activeLevel = null;
     activeMove = null;
@@ -158,15 +186,17 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
     startScreen.classList.remove("hidden");
     playScreen.classList.add("hidden");
     tutorialBadge.classList.add("hidden");
+    captureBadge.classList.add("hidden");
+    exposedBadge.classList.add("hidden");
+    victoryOverlay.classList.add("hidden");
     feedbackMsg.className = "feedback-msg";
-    timeLeft = 60;
+    activeIndex = 0;
     updateHud();
   }
 
   function startRun() {
     ensureAudio();
     streak = 0;
-    timeLeft = 60;
     activeIndex = 0;
     startChallenge(activeIndex);
   }
@@ -186,13 +216,14 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
     challengeStartedAt = performance.now();
     particles = [];
     clearParticles();
-    stopTimer();
-
     startScreen.classList.add("hidden");
     playScreen.classList.remove("hidden");
     tutorialBadge.classList.add("hidden");
-    questionText.textContent = "Toca la pieza defensora.";
-    resultTitle.textContent = "Toca la pieza defensora.";
+    captureBadge.classList.add("hidden");
+    exposedBadge.classList.add("hidden");
+    victoryOverlay.classList.add("hidden");
+    questionText.textContent = "";
+    resultTitle.textContent = "";
     resultText.textContent = "";
     resultPanel.classList.remove("solved");
     feedbackMsg.className = "feedback-msg";
@@ -232,24 +263,6 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
     });
 
     applyTutorial();
-    startTimer();
-  }
-
-  function startTimer() {
-    updateHud();
-    timerId = setInterval(() => {
-      if (solved) return;
-      timeLeft = Math.max(0, timeLeft - 1);
-      updateHud();
-      if (timeLeft <= 0) handleTimeout();
-    }, 1000);
-  }
-
-  function stopTimer() {
-    if (timerId) {
-      clearInterval(timerId);
-      timerId = null;
-    }
   }
 
   function handleSquareClick(square) {
@@ -265,32 +278,32 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
 
   function handleCorrect(square) {
     solved = true;
-    stopTimer();
     tutorialBadge.classList.add("hidden");
     streak += 1;
-    const bonus = performance.now() - challengeStartedAt <= 3000 ? 5 : 2;
-    timeLeft += bonus;
     progress.perfectSolved += 1;
     progress.bestStreak = Math.max(progress.bestStreak, streak);
     saveProgress();
 
     setHighlight(square, "correct-square");
     animatePiece(square, "piece-correct", 900);
-    showFeedback(`✓ +${bonus}s`, true);
+    showCaptureBadge(square);
+    ground.setAutoShapes([{ orig: activeMove.from, dest: activeMove.to, brush: "green" }]);
+    const exposedSquare = exposedSquares[activeLevel.id];
+    if (exposedSquare) setTimeout(() => showExposedBadge(exposedSquare), 420);
+    showFeedback("✓ Correcto", true);
     playSuccessSound();
     spawnParticles(square, 42, "#91e6a5");
     boardWrap.classList.remove("pulse");
     void boardWrap.offsetWidth;
     boardWrap.classList.add("pulse");
-    resultTitle.textContent = `Racha ${streak}`;
+    resultTitle.textContent = "";
     resultText.textContent = "";
     updateHud();
-    autoAdvanceId = setTimeout(continueRun, 760);
+    autoAdvanceId = setTimeout(continueRun, 1500);
   }
 
   function handleWrong(square) {
     solved = true;
-    stopTimer();
     tutorialBadge.classList.add("hidden");
     setHighlight(square, "wrong-square");
     animatePiece(square, "piece-wrong", 340);
@@ -302,28 +315,6 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
     resultTitle.textContent = "❌ Fallo";
     resultText.textContent = "";
     streak = 0;
-    timeLeft = 60;
-    updateHud();
-    setTimeout(() => {
-      activeIndex = 0;
-      startChallenge(activeIndex);
-    }, 950);
-  }
-
-  function handleTimeout() {
-    if (solved) return;
-    solved = true;
-    stopTimer();
-    tutorialBadge.classList.add("hidden");
-    showFeedback("⏱️ Tiempo", false);
-    playErrorSound();
-    boardWrap.classList.remove("shake");
-    void boardWrap.offsetWidth;
-    boardWrap.classList.add("shake");
-    resultTitle.textContent = "⏱️ Tiempo agotado";
-    resultText.textContent = "";
-    streak = 0;
-    timeLeft = 60;
     updateHud();
     setTimeout(() => {
       activeIndex = 0;
@@ -334,7 +325,19 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
   function continueRun() {
     clearAutoAdvance();
     activeIndex += 1;
-    if (activeIndex >= playableLevels.length) activeIndex = 0;
+    if (activeIndex >= playableLevels.length) {
+      activeIndex = playableLevels.length - 1;
+      updateHud();
+      questionText.textContent = "¡Has completado todos los niveles!";
+      resultTitle.textContent = "¡Enhorabuena!";
+      resultText.textContent = "Has completado los 30 niveles.";
+      resultPanel.classList.add("solved");
+      showFeedback("¡Enhorabuena!", true);
+      victoryOverlay.classList.remove("hidden");
+      playVictorySound();
+      spawnVictoryParticles();
+      return;
+    }
     startChallenge(activeIndex);
   }
 
@@ -368,6 +371,39 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
     tutorialBadge.style.left = `${point.x}%`;
     tutorialBadge.style.top = `${point.y}%`;
     tutorialBadge.classList.remove("hidden");
+  }
+
+  function showCaptureBadge(square) {
+    const point = squarePoint(square);
+    captureBadge.style.left = `${point.x}%`;
+    captureBadge.style.top = `${point.y}%`;
+    captureBadge.classList.remove("hidden");
+  }
+
+  function showExposedBadge(square) {
+    if (!solved || exposedSquares[activeLevel?.id] !== square) return;
+    const point = squarePoint(square);
+    exposedBadge.style.left = `${point.x}%`;
+    exposedBadge.style.top = `${point.y}%`;
+    exposedBadge.classList.remove("hidden");
+    spawnParticles(square, 34, "#ff9b55");
+  }
+
+  function spawnVictoryParticles() {
+    resizeParticles();
+    const colors = ["#91e6a5", "#fff3bd", "#7fcdd8", "#ff7a45", "#ff7680"];
+    for (let i = 0; i < 150; i++) {
+      particles.push({
+        x: Math.random() * particleCanvas.width,
+        y: -20 - Math.random() * particleCanvas.height * 0.35,
+        vx: -1.8 + Math.random() * 3.6,
+        vy: 2.5 + Math.random() * 5,
+        life: 1,
+        decay: 0.004 + Math.random() * 0.006,
+        size: 4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
   }
 
   function clearPieceEffects() {
@@ -492,6 +528,7 @@ import { Chessground } from "./vendor/chessground/chessground.min.js";
 
   playButton.addEventListener("click", startRun);
   backButton.addEventListener("click", showStartScreen);
+  victoryOverlay.querySelector("#replayButton").addEventListener("click", startRun);
   window.addEventListener("resize", resizeParticles);
 
   updateHud();
