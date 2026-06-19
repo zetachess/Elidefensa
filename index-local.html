@@ -719,101 +719,6 @@ h1 {
   box-shadow: 0 0 18px rgba(145, 230, 165, 0.35);
 }
 
-.capture-badge {
-  position: absolute;
-  z-index: 8;
-  display: grid;
-  place-items: center;
-  width: 7.5%;
-  height: 7.5%;
-  border-radius: 999px;
-  background: transparent;
-  box-shadow: none;
-  font-size: clamp(0.7rem, 2.5vmin, 1.2rem);
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.42));
-  pointer-events: none;
-  transform: translate(22%, -122%);
-  animation: swordPop 650ms cubic-bezier(.2, 1.6, .4, 1);
-}
-
-.exposed-badge {
-  position: absolute;
-  z-index: 7;
-  display: grid;
-  place-items: center;
-  width: 13%;
-  height: 13%;
-  font-size: clamp(1.35rem, 5.5vmin, 2.8rem);
-  pointer-events: none;
-  opacity: 0.95;
-  transform: translate(-50%, -50%);
-  filter: drop-shadow(0 0 7px rgba(255, 238, 158, 0.95)) drop-shadow(0 0 18px rgba(255, 112, 47, 0.85));
-  animation: exposedPop 1200ms cubic-bezier(.15, 1.2, .35, 1) both;
-}
-
-.exposed-badge::before,
-.exposed-badge::after {
-  content: "";
-  position: absolute;
-  inset: -18%;
-  border: 3px solid rgba(255, 196, 88, 0.85);
-  border-radius: 50%;
-  animation: blastRing 1100ms ease-out both;
-}
-
-.exposed-badge::after {
-  inset: -36%;
-  border-width: 2px;
-  border-color: rgba(255, 105, 55, 0.65);
-  animation-delay: 100ms;
-}
-
-.victory-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-  background: radial-gradient(circle, rgba(24, 61, 52, 0.82), rgba(5, 7, 10, 0.94));
-  backdrop-filter: blur(7px);
-}
-
-.victory-card {
-  width: min(100%, 520px);
-  display: grid;
-  justify-items: center;
-  gap: 12px;
-  padding: clamp(24px, 6vmin, 48px);
-  border: 1px solid rgba(255, 243, 189, 0.45);
-  border-radius: 18px;
-  background: linear-gradient(145deg, rgba(127, 205, 216, 0.18), rgba(9, 11, 16, 0.92));
-  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.55), 0 0 55px rgba(145, 230, 165, 0.18);
-  text-align: center;
-  animation: victoryIn 650ms cubic-bezier(.2, 1.25, .4, 1);
-}
-
-.victory-trophy {
-  display: grid;
-  place-items: center;
-  width: clamp(72px, 17vmin, 112px);
-  aspect-ratio: 1;
-  border: 3px solid var(--gold);
-  border-radius: 50%;
-  background: linear-gradient(145deg, #fff3bd, #dba940);
-  color: #42300b;
-  box-shadow: 0 0 34px rgba(255, 243, 189, 0.3);
-  font-size: clamp(2.5rem, 8vmin, 4.5rem);
-  animation: trophyFloat 1.8s ease-in-out infinite;
-}
-
-.victory-card p,
-.victory-card h2,
-.victory-card span { margin: 0; }
-.victory-card p { color: var(--green); font-weight: 950; letter-spacing: 0.12em; }
-.victory-card h2 { color: var(--gold); font-size: clamp(1.8rem, 6vmin, 3.5rem); line-height: 1; }
-.victory-card span { max-width: 390px; color: var(--muted); font-weight: 750; line-height: 1.45; }
-
 .cg-wrap {
   width: 100%;
   height: 100%;
@@ -988,30 +893,6 @@ cg-board square.wrong-square {
   }
 }
 
-@keyframes swordPop {
-  0% { opacity: 0; transform: translate(22%, -122%) scale(0) rotate(-35deg); }
-  70% { opacity: 1; transform: translate(22%, -122%) scale(1.2) rotate(8deg); }
-  100% { transform: translate(22%, -122%) scale(1) rotate(0); }
-}
-
-@keyframes exposedPop {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2) rotate(-15deg); }
-  35% { opacity: 1; transform: translate(-50%, -50%) scale(1.35) rotate(8deg); }
-  62% { transform: translate(-50%, -50%) scale(0.92) rotate(-3deg); }
-  82% { transform: translate(-50%, -50%) scale(1.12) rotate(2deg); }
-  100% { opacity: 0.88; transform: translate(-50%, -50%) scale(1) rotate(0); }
-}
-
-@keyframes blastRing {
-  0% { opacity: 0.95; transform: scale(0.2); }
-  100% { opacity: 0; transform: scale(1.8); }
-}
-
-@keyframes trophyFloat {
-  0%, 100% { transform: translateY(0) rotate(-3deg); }
-  50% { transform: translateY(-10px) rotate(3deg); }
-}
-
 @media (max-width: 740px) {
   body {
     padding: 6px;
@@ -1137,7 +1018,7 @@ cg-board square.wrong-square {
           </div>
         </div>
         <div class="stats" aria-label="Progreso">
-          <span><em aria-hidden="true">🎯</em><b id="levelCounter">1/30</b><small>Niveles</small></span>
+          <span><em aria-hidden="true">⏱️</em><b id="timeCounter">60</b><small>Tiempo</small></span>
           <span><em aria-hidden="true">❤️</em><b id="lifeCounter">1</b><small>Vida</small></span>
           <span><em aria-hidden="true">🔥</em><b id="streakCounter">0</b><small>Racha</small></span>
           <span><em aria-hidden="true">🏆</em><b id="bestCounter">0</b><small>Récord</small></span>
@@ -1156,7 +1037,7 @@ cg-board square.wrong-square {
       <section class="play-screen hidden" id="playScreen" aria-label="Reto">
         <div class="question-row">
           <button class="ghost-button" id="backButton" type="button">← Inicio</button>
-          <p id="questionText"></p>
+          <p id="questionText">Toca la pieza defensora.</p>
         </div>
 
         <div class="board-stage" id="boardStage">
@@ -1169,7 +1050,7 @@ cg-board square.wrong-square {
         </div>
 
         <div class="result-panel" id="resultPanel" aria-live="polite">
-          <strong id="resultTitle"></strong>
+          <strong id="resultTitle">Pulsa la pieza defensora.</strong>
           <p id="resultText"></p>
         </div>
       </section>
@@ -1449,19 +1330,12 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
   const STORAGE_KEY = "goblin-elimina-defensa-run";
   const allLevels = window.levels || [];
   const playableLevels = allLevels.filter((level) => level.fen && level.firstMove && !level.locked);
-  const exposedSquares = {
-    1: "h7", 2: "d5", 3: "c2", 4: "f5", 5: "d7",
-    6: "f5", 7: "b4", 8: "d7", 9: "g4",
-    10: "h7", 11: "e7", 12: "f6", 13: "b2", 14: "d7",
-    15: "d7", 16: "g4", 17: "e7", 18: "b6", 19: "d7",
-    20: "d6", 21: "d5", 22: "b4"
-  };
 
   const startScreen = document.getElementById("startScreen");
   const playScreen = document.getElementById("playScreen");
   const playButton = document.getElementById("playButton");
   const backButton = document.getElementById("backButton");
-  const levelCounter = document.getElementById("levelCounter");
+  const timeCounter = document.getElementById("timeCounter");
   const lifeCounter = document.getElementById("lifeCounter");
   const streakCounter = document.getElementById("streakCounter");
   const bestCounter = document.getElementById("bestCounter");
@@ -1475,25 +1349,6 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
   const tutorialBadge = document.getElementById("tutorialBadge");
   const particleCanvas = document.getElementById("particles");
   const particleCtx = particleCanvas.getContext("2d");
-  const captureBadge = document.createElement("div");
-  captureBadge.className = "capture-badge hidden";
-  captureBadge.textContent = "⚔️";
-  boardWrap.appendChild(captureBadge);
-  const exposedBadge = document.createElement("div");
-  exposedBadge.className = "exposed-badge hidden";
-  exposedBadge.textContent = "☠️";
-  boardWrap.appendChild(exposedBadge);
-  const victoryOverlay = document.createElement("div");
-  victoryOverlay.className = "victory-overlay hidden";
-  victoryOverlay.innerHTML = `
-    <div class="victory-card">
-      <div class="victory-trophy" aria-hidden="true">★</div>
-      <p>¡MISIÓN CUMPLIDA!</p>
-      <h2>¡Enhorabuena, campeón!</h2>
-      <span>Has encontrado y eliminado las 30 defensas. Tu visión táctica está más afilada que nunca.</span>
-      <button class="primary-button" id="replayButton" type="button">Jugar otra vez</button>
-    </div>`;
-  playScreen.appendChild(victoryOverlay);
 
   let ground = null;
   let audioCtx = null;
@@ -1503,6 +1358,8 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
   let targetSquare = null;
   let solved = false;
   let streak = 0;
+  let timeLeft = 60;
+  let timerId = null;
   let autoAdvanceId = null;
   let challengeStartedAt = 0;
   let particles = [];
@@ -1527,7 +1384,7 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
   }
 
   function updateHud() {
-    levelCounter.textContent = `${Math.min(activeIndex + 1, playableLevels.length)}/${playableLevels.length}`;
+    timeCounter.textContent = String(timeLeft);
     lifeCounter.textContent = "1";
     streakCounter.textContent = String(streak);
     bestCounter.textContent = String(progress.bestStreak);
@@ -1597,12 +1454,6 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
     setTimeout(() => playTone(118, 0.16, "square", 0.05), 90);
   }
 
-  function playVictorySound() {
-    [523, 659, 784, 1047].forEach((frequency, index) => {
-      setTimeout(() => playTone(frequency, 0.34, "triangle", 0.09), index * 135);
-    });
-  }
-
   function computeFirstMove(level) {
     const chess = new Chess(level.fen);
     const move = chess.move(level.firstMove);
@@ -1617,6 +1468,7 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
   }
 
   function showStartScreen() {
+    stopTimer();
     clearAutoAdvance();
     activeLevel = null;
     activeMove = null;
@@ -1630,17 +1482,15 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
     startScreen.classList.remove("hidden");
     playScreen.classList.add("hidden");
     tutorialBadge.classList.add("hidden");
-    captureBadge.classList.add("hidden");
-    exposedBadge.classList.add("hidden");
-    victoryOverlay.classList.add("hidden");
     feedbackMsg.className = "feedback-msg";
-    activeIndex = 0;
+    timeLeft = 60;
     updateHud();
   }
 
   function startRun() {
     ensureAudio();
     streak = 0;
+    timeLeft = 60;
     activeIndex = 0;
     startChallenge(activeIndex);
   }
@@ -1660,14 +1510,13 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
     challengeStartedAt = performance.now();
     particles = [];
     clearParticles();
+    stopTimer();
+
     startScreen.classList.add("hidden");
     playScreen.classList.remove("hidden");
     tutorialBadge.classList.add("hidden");
-    captureBadge.classList.add("hidden");
-    exposedBadge.classList.add("hidden");
-    victoryOverlay.classList.add("hidden");
-    questionText.textContent = "";
-    resultTitle.textContent = "";
+    questionText.textContent = "Toca la pieza defensora.";
+    resultTitle.textContent = "Toca la pieza defensora.";
     resultText.textContent = "";
     resultPanel.classList.remove("solved");
     feedbackMsg.className = "feedback-msg";
@@ -1707,6 +1556,24 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
     });
 
     applyTutorial();
+    startTimer();
+  }
+
+  function startTimer() {
+    updateHud();
+    timerId = setInterval(() => {
+      if (solved) return;
+      timeLeft = Math.max(0, timeLeft - 1);
+      updateHud();
+      if (timeLeft <= 0) handleTimeout();
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerId) {
+      clearInterval(timerId);
+      timerId = null;
+    }
   }
 
   function handleSquareClick(square) {
@@ -1722,32 +1589,32 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
 
   function handleCorrect(square) {
     solved = true;
+    stopTimer();
     tutorialBadge.classList.add("hidden");
     streak += 1;
+    const bonus = performance.now() - challengeStartedAt <= 3000 ? 5 : 2;
+    timeLeft += bonus;
     progress.perfectSolved += 1;
     progress.bestStreak = Math.max(progress.bestStreak, streak);
     saveProgress();
 
     setHighlight(square, "correct-square");
     animatePiece(square, "piece-correct", 900);
-    showCaptureBadge(square);
-    ground.setAutoShapes([{ orig: activeMove.from, dest: activeMove.to, brush: "green" }]);
-    const exposedSquare = exposedSquares[activeLevel.id];
-    if (exposedSquare) setTimeout(() => showExposedBadge(exposedSquare), 420);
-    showFeedback("✓ Correcto", true);
+    showFeedback(`✓ +${bonus}s`, true);
     playSuccessSound();
     spawnParticles(square, 42, "#91e6a5");
     boardWrap.classList.remove("pulse");
     void boardWrap.offsetWidth;
     boardWrap.classList.add("pulse");
-    resultTitle.textContent = "¡Defensa eliminada!";
-    resultText.textContent = `Jugada: ${activeLevel.firstMove}`;
+    resultTitle.textContent = `Racha ${streak}`;
+    resultText.textContent = "";
     updateHud();
-    autoAdvanceId = setTimeout(continueRun, 1500);
+    autoAdvanceId = setTimeout(continueRun, 760);
   }
 
   function handleWrong(square) {
     solved = true;
+    stopTimer();
     tutorialBadge.classList.add("hidden");
     setHighlight(square, "wrong-square");
     animatePiece(square, "piece-wrong", 340);
@@ -1759,6 +1626,28 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
     resultTitle.textContent = "❌ Fallo";
     resultText.textContent = "";
     streak = 0;
+    timeLeft = 60;
+    updateHud();
+    setTimeout(() => {
+      activeIndex = 0;
+      startChallenge(activeIndex);
+    }, 950);
+  }
+
+  function handleTimeout() {
+    if (solved) return;
+    solved = true;
+    stopTimer();
+    tutorialBadge.classList.add("hidden");
+    showFeedback("⏱️ Tiempo", false);
+    playErrorSound();
+    boardWrap.classList.remove("shake");
+    void boardWrap.offsetWidth;
+    boardWrap.classList.add("shake");
+    resultTitle.textContent = "⏱️ Tiempo agotado";
+    resultText.textContent = "";
+    streak = 0;
+    timeLeft = 60;
     updateHud();
     setTimeout(() => {
       activeIndex = 0;
@@ -1769,19 +1658,7 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
   function continueRun() {
     clearAutoAdvance();
     activeIndex += 1;
-    if (activeIndex >= playableLevels.length) {
-      activeIndex = playableLevels.length - 1;
-      updateHud();
-      questionText.textContent = "¡Has completado todos los niveles!";
-      resultTitle.textContent = "¡Enhorabuena!";
-      resultText.textContent = "Has completado los 30 niveles.";
-      resultPanel.classList.add("solved");
-      showFeedback("¡Enhorabuena!", true);
-      victoryOverlay.classList.remove("hidden");
-      playVictorySound();
-      spawnVictoryParticles();
-      return;
-    }
+    if (activeIndex >= playableLevels.length) activeIndex = 0;
     startChallenge(activeIndex);
   }
 
@@ -1815,39 +1692,6 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
     tutorialBadge.style.left = `${point.x}%`;
     tutorialBadge.style.top = `${point.y}%`;
     tutorialBadge.classList.remove("hidden");
-  }
-
-  function showCaptureBadge(square) {
-    const point = squarePoint(square);
-    captureBadge.style.left = `${point.x}%`;
-    captureBadge.style.top = `${point.y}%`;
-    captureBadge.classList.remove("hidden");
-  }
-
-  function showExposedBadge(square) {
-    if (!solved || exposedSquares[activeLevel?.id] !== square) return;
-    const point = squarePoint(square);
-    exposedBadge.style.left = `${point.x}%`;
-    exposedBadge.style.top = `${point.y}%`;
-    exposedBadge.classList.remove("hidden");
-    spawnParticles(square, 34, "#ff9b55");
-  }
-
-  function spawnVictoryParticles() {
-    resizeParticles();
-    const colors = ["#91e6a5", "#fff3bd", "#7fcdd8", "#ff7a45", "#ff7680"];
-    for (let i = 0; i < 150; i++) {
-      particles.push({
-        x: Math.random() * particleCanvas.width,
-        y: -20 - Math.random() * particleCanvas.height * 0.35,
-        vx: -1.8 + Math.random() * 3.6,
-        vy: 2.5 + Math.random() * 5,
-        life: 1,
-        decay: 0.004 + Math.random() * 0.006,
-        size: 4 + Math.random() * 8,
-        color: colors[i % colors.length]
-      });
-    }
   }
 
   function clearPieceEffects() {
@@ -1972,7 +1816,6 @@ var Le=["white","black"];var L=["a","b","c","d","e","f","g","h"],$=["1","2","3",
 
   playButton.addEventListener("click", startRun);
   backButton.addEventListener("click", showStartScreen);
-  victoryOverlay.querySelector("#replayButton").addEventListener("click", startRun);
   window.addEventListener("resize", resizeParticles);
 
   updateHud();
